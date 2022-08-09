@@ -2,7 +2,8 @@ import express, { json } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import router from './routes/router.js'
+import router from './routes/router.js';
+import postsRouter from './routes/postsRouter.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
   })
 
 app.use(router);
+app.use(postsRouter);
 
 const PORT = process.env.PORT;
 
