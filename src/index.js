@@ -11,6 +11,10 @@ dotenv.config();
 app.use(cors());
 app.use(json());
 
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+  })
+
 app.use(router);
 
 const PORT = process.env.PORT;
