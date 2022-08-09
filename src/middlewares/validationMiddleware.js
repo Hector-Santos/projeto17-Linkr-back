@@ -4,6 +4,5 @@ export function validate(req, res, next, schema) {
         if (validation.error) {
           return res.status(422).send(validation.error);
         }
-
     next();
   }
