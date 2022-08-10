@@ -11,8 +11,11 @@ async function getTimelinePosts(){
                 'pictureUrl', users."pictureUrl"
             ) AS author,
             ARRAY_AGG(
-                links.url
-            ) AS "links",
+                JSON_BUILD_OBJECT(
+                    'url', links.url,
+                    'id', links.id
+                )
+            ) AS links,
             ARRAY_AGG(
                 hashtags.name
             ) AS "hashtags"
@@ -25,7 +28,7 @@ async function getTimelinePosts(){
         ON posts.id = "hashtagPosts"."postId"
         JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
-        GROUP BY posts.id, users.username, users."pictureUrl"
+        GROUP BY posts.id, users.username, users."pictureUrl", links.id
         ORDER BY posts."createdAt" DESC
         LIMIT 20
     `);
