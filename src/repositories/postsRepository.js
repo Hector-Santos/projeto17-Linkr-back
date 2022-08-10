@@ -6,6 +6,7 @@ async function getTimelinePosts(){
         SELECT 
             posts.id,
             posts.content,
+            posts.likes,
             JSON_BUILD_OBJECT(
                 'username', users.username,
                 'pictureUrl', users."pictureUrl"
