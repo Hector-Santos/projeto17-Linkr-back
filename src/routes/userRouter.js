@@ -1,9 +1,11 @@
 import { Router } from "express";
+
+import { getUser } from "../controllers/usersController.js";
 import { authentication } from "../middlewares/authMiddleware.js";
-import { getUsers } from "../controllers/usersController.js";
 
-const userRouter = Router();
+const usersRouter = Router();
 
-userRouter.get("/search/:name", authentication, getUsers);
+usersRouter.get("/users",authentication, getUser);
+usersRouter.get("/search/:name", authentication, getUsers);
 
-export default userRouter;
+export default usersRouter;

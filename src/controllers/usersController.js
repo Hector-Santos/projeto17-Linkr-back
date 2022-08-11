@@ -1,6 +1,24 @@
 import { usersRepository }  from '../repositories/usersRepository.js';
 
-export async function getUsers (req, res) {
+async function getUser(req, res){
+    const email = res.locals.dados.email
+    try{
+      const {rows:user} = await usersRepository.getUser(email)
+      if(!user.length) return res.sendStatus(401)
+     
+      res.status(200).send({
+       id: user[0].id,
+       email:user[0].email,
+       username:user[0].username,
+       pictureUrl:user[0].pictureUrl,
+       createdAt:user[0].createdAt})
+      }catch(error){
+        console.log(error)
+        res.sendStatus(400)
+      }  
+};
+
+async function getUsersByName (req, res) {
     const { name } = req.params;
 
     try {
@@ -10,4 +28,9 @@ export async function getUsers (req, res) {
     } catch (error) {
         res.sendStatus(500);
     }
+}
+
+export {
+    getUser,
+    getUsersByName
 }
