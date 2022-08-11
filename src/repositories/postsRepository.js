@@ -38,6 +38,11 @@ async function getTimelinePosts(){
 
 };
 
+async function insertPost(userId, content) {
+	return postgres.query('INSERT INTO posts ("userId",content) VALUES ($1,$2)', [userId, content])
+}
+
 export {
-    getTimelinePosts
+    getTimelinePosts,
+    insertPost
 }
