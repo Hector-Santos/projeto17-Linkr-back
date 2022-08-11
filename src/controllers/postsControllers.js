@@ -25,8 +25,9 @@ async function getMetadataFromLink(req, res, next){
         const linkData = await getLink(linkId);
         if(!linkData) return res.sendStatus(404);
 
-        const { title, description, image } = await getMetadata(linkData.url);
-        res.send({ title, description, image });
+        const metadata = await getMetadata(linkData.url);
+        const { title, description, image } = metadata;
+        res.send({ title, description, image, ogUrl: metadata["og:url"] });
 
     } catch (err) {
         console.log(err);
