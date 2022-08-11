@@ -38,8 +38,8 @@ async function getTimelinePosts(){
 
 };
 
-async function insertPost(userId, content) {
-	return postgres.query('INSERT INTO posts ("userId",content) VALUES ($1,$2)', [userId, content])
+async function insertPost(userId, link, content) {
+	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3)', [userId, link, content])
 }
 
 export {
