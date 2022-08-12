@@ -11,7 +11,7 @@ export async function signUp(req, res) {
     await usersRepository.insertUser(email, encrypted, userName, pictureUrl)
       res.sendStatus(201);
     }catch(error){
-      res.sendStatus(400)
+      res.status(400).send(error)
     }
 }
 
@@ -25,6 +25,7 @@ export async function signIn(req, res) {
     const token = jwt.sign(dados, chaveSecreta)
     res.status(201).send(token);
   }catch(error){
-    res.sendStatus(409)
+    console.log(error)
+    res.sendStatus(400)
   }
 }

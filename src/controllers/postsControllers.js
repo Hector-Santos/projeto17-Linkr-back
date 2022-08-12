@@ -1,5 +1,7 @@
-import { getPost, getTimelinePosts } from "../repositories/postsRepository.js";
+import { getPost, getTimelinePosts, insertPost } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
+import  {usersRepository}  from '../repositories/usersRepository.js';
+
 
 async function getTimeline(req, res, next){
 
@@ -35,7 +37,25 @@ async function getMetadataFromPostId(req, res, next){
 
 }
 
+async function postPost(req, res){
+    const content =  req.body.content
+    const link = req.body.link
+    const email = res.locals.dados.email
+    try{
+      const {rows:user} = await usersRepository.getUser(email)
+      if(!user.length) return res.sendStatus(401)
+      
+      await insertPost(user[0].id, link, content)
+        res.sendStatus(201);
+      }catch(error){
+        console.log(error)
+        res.sendStatus(400)
+      }  
+
+};
+
 export {
     getTimeline,
     getMetadataFromPostId
+    postPost
 }
