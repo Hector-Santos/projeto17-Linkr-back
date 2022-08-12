@@ -6,7 +6,7 @@ async function getUser(email) {
 
 async function getUserByName (name) {
 	return postgres.query(`
-		SELECT users.username, users."pictureUrl"
+		SELECT users.id, users.username, users."pictureUrl"
 		FROM users
 		WHERE users.username
 		ILIKE '${name}%'
