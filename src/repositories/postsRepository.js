@@ -51,6 +51,6 @@ async function insertPost(userId, link, content) {
 
 export {
     getTimelinePosts,
-    getPost
+    getPost,
     insertPost
 }

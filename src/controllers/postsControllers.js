@@ -56,6 +56,6 @@ async function postPost(req, res){
 
 export {
     getTimeline,
-    getMetadataFromPostId
+    getMetadataFromPostId,
     postPost
 }

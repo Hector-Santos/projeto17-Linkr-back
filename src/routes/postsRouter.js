@@ -6,8 +6,8 @@ import postsSchema from "../schemas/postsSchema.js";
 
 const postsRouter = Router();
 
-router.get('/timeline', getTimeline);
-router.get('/get-url-metadata/:postId', getMetadataFromPostId);
+postsRouter.get('/timeline', getTimeline);
+postsRouter.get('/get-url-metadata/:postId', getMetadataFromPostId);
 postsRouter.post("/posts", (req, res, next) => validate(req, res, next, postsSchema),authentication, postPost);
 
 export default postsRouter;
