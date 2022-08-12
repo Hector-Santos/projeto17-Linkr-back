@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getMetadataFromLink, getTimeline } from "../controllers/postsControllers.js";
+import { getMetadataFromPostId, getTimeline } from "../controllers/postsControllers.js";
 
 const router = Router();
 
 router.get('/timeline', getTimeline);
-router.get('/get-url-metadata/:linkId', getMetadataFromLink);
+router.get('/get-url-metadata/:postId', getMetadataFromPostId);
 
 export default router;
