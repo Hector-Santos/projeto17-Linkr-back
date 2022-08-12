@@ -1,5 +1,4 @@
-import { getLink } from "../repositories/linksRepository.js";
-import { getTimelinePosts, insertPost } from "../repositories/postsRepository.js";
+import { getPost, getTimelinePosts, insertPost } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 
@@ -18,16 +17,16 @@ async function getTimeline(req, res, next){
 
 };
 
-async function getMetadataFromLink(req, res, next){
+async function getMetadataFromPostId(req, res, next){
 
-    const { linkId } = req.params;
+    const { postId } = req.params;
 
     try {
         
-        const linkData = await getLink(linkId);
+        const linkData = await getPost(postId);
         if(!linkData) return res.sendStatus(404);
 
-        const metadata = await getMetadata(linkData.url);
+        const metadata = await getMetadata(linkData.link);
         const { title, description, image } = metadata;
         res.send({ title, description, image, ogUrl: metadata["og:url"] });
 
@@ -57,6 +56,6 @@ async function postPost(req, res){
 
 export {
     getTimeline,
-    getMetadataFromLink,
+    getMetadataFromPostId,
     postPost
 }

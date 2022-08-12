@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import router from './routes/router.js';
 import postsRouter from './routes/postsRouter.js';
+import hashtagsRouter from './routes/hashtagsRouter.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 
 app.use(router);
 app.use(postsRouter);
+app.use(hashtagsRouter);
 
 const PORT = process.env.PORT;
 
