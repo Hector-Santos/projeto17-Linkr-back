@@ -13,14 +13,14 @@ async function getTimelinePosts(){
                 'pictureUrl', users."pictureUrl"
             ) AS author,
             ARRAY_AGG(
-                hashtags.name
+                COALESCE(hashtags.name, '')
             ) AS "hashtags"
         FROM posts
         JOIN users
         ON users.id = posts."userId"
-        JOIN "hashtagPosts"
+        LEFT JOIN "hashtagPosts"
         ON posts.id = "hashtagPosts"."postId"
-        JOIN hashtags
+        LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
         GROUP BY posts.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
