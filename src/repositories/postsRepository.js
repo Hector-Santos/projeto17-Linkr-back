@@ -49,6 +49,13 @@ async function insertPost(userId, link, content) {
 	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3)', [userId, link, content])
 }
 
+async function deletePostById(postId) {
+    postgres.query(`
+        DELETE FROM posts
+        WHERE id = $1
+    `, [postId]);
+}
+
 async function getPostsFromUser(userId){
 
     const { rows: posts } = await postgres.query(`
@@ -87,5 +94,6 @@ export {
     getTimelinePosts,
     getPost,
     insertPost,
+    deletePostById,
     getPostsFromUser
 }

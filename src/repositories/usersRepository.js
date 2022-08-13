@@ -4,6 +4,10 @@ async function getUser(email) {
 	return postgres.query('SELECT * FROM users WHERE email=$1', [email]);
 }
 
+async function getUserById(id) {
+	return postgres.query('SELECT * FROM users WHERE id=$1', [id]);
+}
+
 async function getUserByName (name) {
 	return postgres.query(`
 		SELECT users.id, users.username, users."pictureUrl"
@@ -31,6 +35,7 @@ async function getById(id){
 
 export const usersRepository = {
 	getUser,
+	getUserById,
 	getUserByName,
     insertUser,
 	getById
