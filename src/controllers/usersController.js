@@ -30,7 +30,26 @@ async function getUsersByName (req, res) {
     }
 }
 
+async function getUserById(req, res, next){
+
+    const { id } = req.params;
+
+    try {
+        
+        const userData = await usersRepository.getById(id);
+        if(!userData) return res.sendStatus(404);
+        const { username, pictureUrl } = userData;
+        res.send({ username, pictureUrl });
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+}
+
 export {
     getUser,
-    getUsersByName
+    getUsersByName,
+    getUserById
 }
