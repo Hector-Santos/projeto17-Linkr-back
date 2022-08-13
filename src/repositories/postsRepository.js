@@ -49,8 +49,43 @@ async function insertPost(userId, link, content) {
 	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3)', [userId, link, content])
 }
 
+async function getPostsFromUser(userId){
+
+    const { rows: posts } = await postgres.query(`
+        SELECT 
+            posts.id,
+            posts.content,
+            posts.likes,
+            posts.link,
+            JSON_BUILD_OBJECT(
+                'username', users.username,
+                'pictureUrl', users."pictureUrl"
+            ) AS author,
+            ARRAY_AGG(
+                COALESCE(hashtags.name, '')
+            ) AS "hashtags"
+        FROM posts
+        JOIN users
+        ON users.id = posts."userId"
+        LEFT JOIN "hashtagPosts"
+        ON posts.id = "hashtagPosts"."postId"
+        LEFT JOIN hashtags
+        ON hashtags.id = "hashtagPosts"."hashtagId"
+        WHERE users.id = $1
+        GROUP BY posts.id, users.username, users."pictureUrl"
+        ORDER BY posts."createdAt" DESC
+        LIMIT 20
+    `, [
+        userId
+    ]);
+
+    return posts;
+
+}
+
 export {
     getTimelinePosts,
     getPost,
-    insertPost
+    insertPost,
+    getPostsFromUser
 }
