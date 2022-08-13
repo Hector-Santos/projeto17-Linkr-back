@@ -9,6 +9,7 @@ async function getTimelinePosts(){
             posts.likes,
             posts.link,
             JSON_BUILD_OBJECT(
+                'id', users.id,
                 'username', users.username,
                 'pictureUrl', users."pictureUrl"
             ) AS author,
@@ -22,7 +23,7 @@ async function getTimelinePosts(){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
-        GROUP BY posts.id, users.username, users."pictureUrl"
+        GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
     `);
@@ -65,6 +66,7 @@ async function getPostsFromUser(userId){
             posts.likes,
             posts.link,
             JSON_BUILD_OBJECT(
+                'id', users.id,
                 'username', users.username,
                 'pictureUrl', users."pictureUrl"
             ) AS author,
@@ -78,8 +80,7 @@ async function getPostsFromUser(userId){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
-        WHERE users.id = $1
-        GROUP BY posts.id, users.username, users."pictureUrl"
+        GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
     `, [
