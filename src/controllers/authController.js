@@ -20,7 +20,7 @@ export async function signIn(req, res) {
   try{
     const {rows:login} = await usersRepository.getUser(email)
     if(!login.length || !bcrypt.compareSync(password, login[0].password) ) return res.sendStatus(401)
-    const dados = { email: email };
+    const dados = { id: login[0].id };
     const chaveSecreta = process.env.JWT_SECRET;
     const token = jwt.sign(dados, chaveSecreta)
     res.status(201).send(token);

@@ -1,4 +1,4 @@
-import { getPost, getTimelinePosts, insertPost } from "../repositories/postsRepository.js";
+import { getPost, getTimelinePosts, insertPost, deletePostById } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 
@@ -40,9 +40,9 @@ async function getMetadataFromPostId(req, res, next){
 async function postPost(req, res){
     const content =  req.body.content
     const link = req.body.link
-    const email = res.locals.dados.email
+    const id = res.locals.dados.id
     try{
-      const {rows:user} = await usersRepository.getUser(email)
+      const {rows:user} = await usersRepository.getUserById(id)
       if(!user.length) return res.sendStatus(401)
       
       await insertPost(user[0].id, link, content)
@@ -54,8 +54,22 @@ async function postPost(req, res){
 
 };
 
+async function deletePost (req, res) {
+    const { id: postId } = req.params;
+
+    try {
+        await deletePostById(postId);
+
+        res.status(200).send("Post successfully deleted");
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
 export {
     getTimeline,
     getMetadataFromPostId,
-    postPost
+    postPost,
+    deletePost
 }
