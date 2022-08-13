@@ -46,11 +46,21 @@ async function getUserById(req, res, next){
         console.log(err);
         res.sendStatus(500);
     }
+}
 
+async function getUserId(req, res) {
+    const id = { id: res.locals.dados.id };
+
+    try {
+        res.status(200).send(id);
+    } catch (error) {
+        res.sendStatus(500);
+    }
 }
 
 export {
     getUser,
     getUsersByName,
-    getUserById
+    getUserById,
+    getUserId
 }
