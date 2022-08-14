@@ -99,11 +99,23 @@ async function getPostsFromUser(userId){
 
 }
 
+async function addLike(postId) {
+	return postgres.query('UPDATE posts SET likes = likes + 1 WHERE id = $1;', [postId])
+}
+
+async function subtractLike(postId) {
+	return postgres.query('UPDATE posts SET likes = likes - 1 WHERE id = $1;', [postId])
+}
+
+
 export {
     getTimelinePosts,
     getPost,
     insertPost,
+    getPostsFromUser,
+    addLike,
+    subtractLike,
     deletePostById,
     editPostById,
-    getPostsFromUser
+
 }

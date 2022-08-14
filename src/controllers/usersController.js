@@ -3,16 +3,16 @@ import { usersRepository }  from '../repositories/usersRepository.js';
 async function getUser(req, res){
     const id = res.locals.dados.id
     try{
-      const {rows:user} = await usersRepository.getUserById(id)
-      
-      if(!user.length) return res.sendStatus(401);
-     
-      res.status(200).send({
-       id: user[0].id,
-       email:user[0].email,
-       username:user[0].username,
-       pictureUrl:user[0].pictureUrl,
-       createdAt:user[0].createdAt})
+      const user = await usersRepository.getById(id)
+      if(!user){ return res.sendStatus(401)
+      }else{
+        res.status(200).send({
+            id: user.id,
+            email:user.email,
+            username:user.username,
+            pictureUrl:user.pictureUrl,
+            createdAt:user.createdAt})
+      }
       }catch(error){
         console.log(error)
         res.sendStatus(400)
