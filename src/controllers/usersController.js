@@ -1,17 +1,21 @@
 import { usersRepository }  from '../repositories/usersRepository.js';
 
 async function getUser(req, res){
-    const email = res.locals.dados.email
+    const id = res.locals.dados.id
+    console.log(id)
     try{
-      const {rows:user} = await usersRepository.getUser(email)
-      if(!user.length) return res.sendStatus(401)
+      const user = await usersRepository.getById(id)
+      if(!user){ return res.sendStatus(401)
+      }else{
+        res.status(200).send({
+            id: user.id,
+            email:user.email,
+            username:user.username,
+            pictureUrl:user.pictureUrl,
+            createdAt:user.createdAt})
+      }
      
-      res.status(200).send({
-       id: user[0].id,
-       email:user[0].email,
-       username:user[0].username,
-       pictureUrl:user[0].pictureUrl,
-       createdAt:user[0].createdAt})
+      
       }catch(error){
         console.log(error)
         res.sendStatus(400)

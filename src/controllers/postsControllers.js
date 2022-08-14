@@ -1,6 +1,7 @@
-import { getPost, getPostsFromUser, getTimelinePosts, insertPost } from "../repositories/postsRepository.js";
+import { getPost, getPostsFromUser, getTimelinePosts, insertPost, addLike, subtractLike } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
+import {getLiked, insertLikedPost, deleteLiked} from "../repositories/likedPostsRepository.js";
 
 
 async function getTimeline(req, res, next){
@@ -70,9 +71,82 @@ async function postsFromUser(req, res, next){
 
 };
 
+
+async function postLikedPost(req, res, next){
+    const userId = res.locals.dados.id
+    const postId = req.body.postId
+
+    try {
+
+        const {rows:hasLike} = await getLiked(postId,userId);
+        hasLike.length? res.sendStatus(409) : await insertLikedPost(postId,userId);
+        res.sendStatus(201);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(400);
+    }
+   
+};
+
+async function getLikedPost(req, res, next){
+    const userId = res.locals.dados.id
+    const postId = req.params.postId
+    try {
+        const {rows:hasLike} = await getLiked(postId,userId);
+        hasLike.length? res.status(200).send(true): res.status(200).send(false)
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(400);
+    }
+};
+
+async function deleteLikedPost(req, res, next){
+    const userId = res.locals.dados.id
+    const postId = req.body.postId
+''
+    try {
+        await deleteLiked(postId,userId);
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(400);
+    }
+};
+
+
+async function putLikePost(req, res, next){
+    const postId = req.body.postId
+    const userId = res.locals.dados.id
+    const operation = req.params.operation
+    try {
+        if(operation === "add" && userId){
+        await addLike(postId);
+          return res.sendStatus(200);
+        }else if(operation === "subtract" && userId){
+            await subtractLike(postId);
+            return res.sendStatus(200);
+        }else{
+          return res.sendStatus(401) 
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(400);
+    }
+};
+
+
+
+
 export {
     getTimeline,
     getMetadataFromPostId,
     postPost,
-    postsFromUser
+    postsFromUser,
+    postLikedPost,
+    getLikedPost,
+    deleteLikedPost,
+    putLikePost
 }
