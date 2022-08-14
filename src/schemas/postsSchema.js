@@ -6,4 +6,11 @@ const postsSchema = joi.object({
 
 });
 
-export default postsSchema;
+const editSchema = joi.object({
+  content: joi.string().required()
+});
+
+export {
+  postsSchema,
+  editSchema
+};

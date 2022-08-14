@@ -57,6 +57,14 @@ async function deletePostById(postId) {
     `, [postId]);
 }
 
+async function editPostById(postId, content) {
+    postgres.query(`
+        UPDATE posts
+        SET content = $1
+        WHERE id = $2
+    `, [content, postId]);
+}
+
 async function getPostsFromUser(userId){
 
     const { rows: posts } = await postgres.query(`
@@ -96,5 +104,6 @@ export {
     getPost,
     insertPost,
     deletePostById,
+    editPostById,
     getPostsFromUser
 }
