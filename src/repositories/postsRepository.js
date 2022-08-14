@@ -9,6 +9,7 @@ async function getTimelinePosts(){
             posts.likes,
             posts.link,
             JSON_BUILD_OBJECT(
+                'id', users.id,
                 'username', users.username,
                 'pictureUrl', users."pictureUrl"
             ) AS author,
@@ -22,7 +23,7 @@ async function getTimelinePosts(){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
-        GROUP BY posts.id, users.username, users."pictureUrl"
+        GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
     `);
@@ -49,6 +50,21 @@ async function insertPost(userId, link, content) {
 	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3)', [userId, link, content])
 }
 
+async function deletePostById(postId) {
+    postgres.query(`
+        DELETE FROM posts
+        WHERE id = $1
+    `, [postId]);
+}
+
+async function editPostById(postId, content) {
+    postgres.query(`
+        UPDATE posts
+        SET content = $1
+        WHERE id = $2
+    `, [content, postId]);
+}
+
 async function getPostsFromUser(userId){
 
     const { rows: posts } = await postgres.query(`
@@ -58,6 +74,7 @@ async function getPostsFromUser(userId){
             posts.likes,
             posts.link,
             JSON_BUILD_OBJECT(
+                'id', users.id,
                 'username', users.username,
                 'pictureUrl', users."pictureUrl"
             ) AS author,
@@ -71,8 +88,7 @@ async function getPostsFromUser(userId){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
-        WHERE users.id = $1
-        GROUP BY posts.id, users.username, users."pictureUrl"
+        GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
     `, [
@@ -98,5 +114,8 @@ export {
     insertPost,
     getPostsFromUser,
     addLike,
-    subtractLike
+    subtractLike,
+    deletePostById,
+    editPostById,
+
 }
