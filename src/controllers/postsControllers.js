@@ -1,4 +1,4 @@
-import { getPost, getPostsFromUser, getTimelinePosts, insertPost, deletePostById } from "../repositories/postsRepository.js";
+import { getPost, getPostsFromUser, getTimelinePosts, insertPost, deletePostById, editPostById } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 
@@ -67,6 +67,20 @@ async function deletePost (req, res) {
     }
 }
 
+async function editPost (req, res) {
+    const { id: postId } = req.params;
+    const content = req.body.content;
+
+    try {
+        await editPostById(postId, content);
+        
+        return res.status(200).send("Post successfully edited");
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
 async function postsFromUser(req, res, next){
 
     const { userId } = req.params;
@@ -88,5 +102,6 @@ export {
     getMetadataFromPostId,
     postPost,
     deletePost,
+    editPost,
     postsFromUser
 }
