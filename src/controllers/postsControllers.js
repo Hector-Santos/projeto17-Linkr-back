@@ -1,8 +1,17 @@
-import { getPost, getPostsFromUser, getTimelinePosts, insertPost, deletePostById, editPostById,  addLike, subtractLike } from "../repositories/postsRepository.js";
+import { 
+    getPost, 
+    getPostsFromUser, 
+    getTimelinePosts, 
+    insertPost, 
+    deletePostById, 
+    editPostById,  
+    addLike, 
+    subtractLike, 
+    deleteLikesByPost, 
+    deleteHashtagsByPost } from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 import {getLiked, insertLikedPost, deleteLiked} from "../repositories/likedPostsRepository.js";
-
 
 async function getTimeline(req, res, next){
 
@@ -57,8 +66,18 @@ async function postPost(req, res){
 
 async function deletePost (req, res) {
     const { id: postId } = req.params;
+    const likes = res.locals.dados.likes;
+    const hashtags = res.locals.dados.hashtags;
 
     try {
+        if (likes > 0) {
+            await deleteLikesByPost(postId);
+        }
+
+        if (hashtags > 0) {
+            await deleteHashtagsByPost(postId);
+        } 
+
         await deletePostById(postId);
 
         res.status(200).send("Post successfully deleted");
