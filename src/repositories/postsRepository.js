@@ -126,6 +126,31 @@ async function subtractLike(postId) {
 	return postgres.query('UPDATE posts SET likes = likes - 1 WHERE id = $1;', [postId])
 }
 
+async function getLastLikes(postId){
+
+    const { rows: likes } = await postgres.query(`
+        SELECT 
+            JSON_BUILD_OBJECT(
+                'username', users.username,
+                'id', users.id
+            ) AS "user",
+            COUNT("likedPosts".id) AS "total"
+        FROM posts
+        LEFT JOIN "likedPosts"
+        ON posts.id = "likedPosts"."postId"
+        LEFT JOIN users
+        ON "likedPosts"."userId" = users.id
+        WHERE "posts"."id" = $1
+        GROUP BY "likedPosts"."postId", "likedPosts"."createdAt", users.id, users.username
+        ORDER BY "likedPosts"."createdAt" DESC
+        LIMIT 2
+    `, [
+        postId
+    ]);
+
+    return likes;
+
+}
 
 export {
     getTimelinePosts,
@@ -137,5 +162,6 @@ export {
     deleteHashtagsByPost,
     deleteLikesByPost,
     editPostById,
-    getPostsFromUser
+    getPostsFromUser,
+    getLastLikes
 }
