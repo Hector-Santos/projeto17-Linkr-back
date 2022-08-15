@@ -31,6 +31,9 @@ async function getUsersByName (req, res) {
     }
 }
 
+
+
+
 async function getUserById(req, res, next){
 
     const { id } = req.params;
@@ -63,4 +66,5 @@ export {
     getUsersByName,
     getUserById,
     getUserId
+
 }

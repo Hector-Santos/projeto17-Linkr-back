@@ -82,29 +82,30 @@ async function editPostById(postId, content) {
 async function getPostsFromUser(userId){
 
     const { rows: posts } = await postgres.query(`
-        SELECT 
-            posts.id,
-            posts.content,
-            posts.likes,
-            posts.link,
-            JSON_BUILD_OBJECT(
-                'id', users.id,
-                'username', users.username,
-                'pictureUrl', users."pictureUrl"
-            ) AS author,
-            ARRAY_AGG(
-                COALESCE(hashtags.name, '')
-            ) AS "hashtags"
-        FROM posts
-        JOIN users
-        ON users.id = posts."userId"
-        LEFT JOIN "hashtagPosts"
-        ON posts.id = "hashtagPosts"."postId"
-        LEFT JOIN hashtags
-        ON hashtags.id = "hashtagPosts"."hashtagId"
-        GROUP BY posts.id, users.id, users.username, users."pictureUrl"
-        ORDER BY posts."createdAt" DESC
-        LIMIT 20
+    SELECT 
+    posts.id,
+    posts.content,
+    posts.likes,
+    posts.link,
+    JSON_BUILD_OBJECT(
+        'id', users.id,
+        'username', users.username,
+        'pictureUrl', users."pictureUrl"
+    ) AS author,
+    ARRAY_AGG(
+        COALESCE(hashtags.name, '')
+    ) AS "hashtags"
+    FROM posts     
+    JOIN users     
+    ON users.id = posts."userId"     
+    LEFT JOIN "hashtagPosts"     
+    ON posts.id = "hashtagPosts"."postId"     
+    LEFT JOIN hashtags     
+    ON hashtags.id = "hashtagPosts"."hashtagId"     
+    GROUP BY posts.id, users.id, users.username, users."pictureUrl"     
+    HAVING users.id = $1     
+    ORDER BY posts."createdAt" DESC     
+    LIMIT 20
     `, [
         userId
     ]);
