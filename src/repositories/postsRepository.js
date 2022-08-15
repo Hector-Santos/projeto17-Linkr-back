@@ -57,6 +57,20 @@ async function deletePostById(postId) {
     `, [postId]);
 }
 
+async function deleteHashtagsByPost(postId) {
+    postgres.query(`
+        DELETE FROM "hashtagPosts"
+        WHERE "postId" = $1
+    `, [postId]);
+}
+
+async function deleteLikesByPost(postId) {
+    postgres.query(`
+        DELETE FROM "likedPosts"
+        WHERE "postId" = $1
+    `, [postId]);
+}
+
 async function editPostById(postId, content) {
     postgres.query(`
         UPDATE posts
@@ -116,6 +130,7 @@ export {
     addLike,
     subtractLike,
     deletePostById,
+    deleteHashtagsByPost,
+    deleteLikesByPost,
     editPostById,
-
 }

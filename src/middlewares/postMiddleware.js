@@ -6,12 +6,25 @@ async function deleteValidation (req, res, next) {
 
     const post = await getPost(postId);
 
+
     if (!post) {
         return res.status(404).send("This post does not exist.")
     }
 
     if (post.userId !== userId) {
         return res.status(401).send("You cannot delete this post.")
+    }
+
+    if (post.likes > 0) {
+        const likes = post.likes;
+        res.locals.dados.likes = likes;
+        console.log("Likes: " + likes);
+    }
+
+    if (post.hashtags > 0) {
+        const hashtags = post.hashtags;
+        res.locals.dados.hashtags = hashtags;
+        console.log("hashtags: " + hashtags);
     }
 
     res.locals.postId = postId;
