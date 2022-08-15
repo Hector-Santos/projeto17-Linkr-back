@@ -17,6 +17,7 @@ async function getUserByName (name) {
 	`)
 }
 
+
 async function insertUser(email, password, userName, pictureUrl) {
 	return postgres.query('INSERT INTO users (email,password,username,"pictureUrl") VALUES ($1,$2,$3,$4)', [email, password, userName, pictureUrl])
 }
