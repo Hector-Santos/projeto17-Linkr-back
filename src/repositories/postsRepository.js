@@ -131,7 +131,6 @@ export {
     getTimelinePosts,
     getPost,
     insertPost,
-    getPostsFromUser,
     addLike,
     subtractLike,
     deletePostById,
