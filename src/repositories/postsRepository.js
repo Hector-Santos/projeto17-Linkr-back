@@ -6,7 +6,7 @@ async function getTimelinePosts(){
         SELECT 
             posts.id,
             posts.content,
-            posts.likes,
+            COUNT("likedPosts".id) AS likes,
             posts.link,
             JSON_BUILD_OBJECT(
                 'id', users.id,
@@ -23,6 +23,8 @@ async function getTimelinePosts(){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
+        LEFT JOIN "likedPosts"
+        ON "likedPosts"."postId" = posts.id
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
@@ -85,7 +87,7 @@ async function getPostsFromUser(userId){
         SELECT 
             posts.id,
             posts.content,
-            posts.likes,
+            COUNT("likedPosts".id) AS likes,
             posts.link,
             JSON_BUILD_OBJECT(
                 'id', users.id,
@@ -102,6 +104,9 @@ async function getPostsFromUser(userId){
         ON posts.id = "hashtagPosts"."postId"
         LEFT JOIN hashtags
         ON hashtags.id = "hashtagPosts"."hashtagId"
+        LEFT JOIN "likedPosts"
+        ON "likedPosts"."postId" = posts.id
+        WHERE users.id = $1
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
@@ -133,4 +138,5 @@ export {
     deleteHashtagsByPost,
     deleteLikesByPost,
     editPostById,
+    getPostsFromUser
 }
