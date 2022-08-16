@@ -49,7 +49,21 @@ async function editValidation (req, res, next) {
     next();
 }
 
+async function commentValidation (req, res, next) {
+    const postId = req.params.id;
+
+    const post = await getPost(postId);
+
+    if (!post) {
+        return res.status(404).send("This post does not exist.")
+    }
+
+    res.locals.postId = postId;
+    next();
+};
+
 export {
     deleteValidation,
-    editValidation
+    editValidation,
+    commentValidation
 };
