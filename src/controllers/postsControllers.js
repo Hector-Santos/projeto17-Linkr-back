@@ -13,6 +13,7 @@ import {
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 import {getLiked, insertLikedPost, deleteLiked} from "../repositories/likedPostsRepository.js";
+import { createIfDoesntExist, createRelationships } from "../repositories/hashtagsRepository.js";
 
 async function getTimeline(req, res, next){
 
@@ -49,19 +50,26 @@ async function getMetadataFromPostId(req, res, next){
 }
 
 async function postPost(req, res){
-    const content =  req.body.content
-    const link = req.body.link
-    const id = res.locals.dados.id
+
+    const { content, link, hashtags } = req.body;
+    const id = res.locals.dados.id;
+
     try{
-      const {rows:user} = await usersRepository.getUserById(id)
-      if(!user.length) return res.sendStatus(401)
+
+        const {rows:user} = await usersRepository.getUserById(id);
+        if(!user.length) return res.sendStatus(401);
       
-      await insertPost(user[0].id, link, content)
+        const { rows: posts } = await insertPost(user[0].id, link, content);
+
+        await createIfDoesntExist(hashtags);
+        await createRelationships(posts[0].id, hashtags);
+
         res.sendStatus(201);
-      }catch(error){
-        console.log(error)
-        res.sendStatus(400)
-      }  
+
+    }catch(error){
+        console.log(error);
+        res.sendStatus(400);
+    }  
 
 };
 

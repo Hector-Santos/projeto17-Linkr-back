@@ -49,7 +49,7 @@ async function getPost(postId){
 }
 
 async function insertPost(userId, link, content) {
-	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3)', [userId, link, content])
+	return postgres.query('INSERT INTO posts ("userId",link,content) VALUES ($1,$2,$3) RETURNING id', [userId, link, content])
 }
 
 async function deletePostById(postId) {
