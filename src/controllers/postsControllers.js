@@ -14,13 +14,18 @@ import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 import {getLiked, insertLikedPost, deleteLiked} from "../repositories/likedPostsRepository.js";
 import { createIfDoesntExist, createRelationships } from "../repositories/hashtagsRepository.js";
+import { countFollowing } from "../repositories/followersRepository.js";
 
 async function getTimeline(req, res, next){
 
+    const { id: userId } = res.locals.dados;
+
     try {
         
-        const posts = await getTimelinePosts();
-        res.send(posts);
+        const posts = await getTimelinePosts(userId);
+        const followingCount = await countFollowing(userId);
+
+        res.send({ posts, followingCount });
 
     } catch (err) {
         console.log(err);
@@ -117,7 +122,7 @@ async function postsFromUser(req, res, next){
     try {
         
         const posts = await getPostsFromUser(userId);
-        res.send(posts);
+        res.send({ posts });
 
     } catch (err) {
         console.log(err);
