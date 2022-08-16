@@ -50,7 +50,7 @@ async function editValidation (req, res, next) {
 }
 
 async function commentValidation (req, res, next) {
-    const postId = req.params.id;
+    const postId = req.params.postId;
 
     const post = await getPost(postId);
 
