@@ -31,9 +31,6 @@ async function getUsersByName (req, res) {
     }
 }
 
-
-
-
 async function getUserById(req, res, next){
 
     const { id } = req.params;
@@ -61,10 +58,68 @@ async function getUserId(req, res) {
     }
 }
 
+async function checkIfUserIsFollowing(req, res, next){
+
+    const { id } = req.params;
+    const userId = res.locals.dados.id;
+
+    try {
+        
+        const isFollowing = await usersRepository.isFollowing(userId, id);
+        res.send(isFollowing);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+}
+
+async function follow(req, res, next){
+
+    const { id: userId } = req.params;
+    const logedUserId = res.locals.dados.id;
+
+    try {
+        
+        const isFollowing = await usersRepository.isFollowing(logedUserId, userId);
+        if(isFollowing) return res.sendStatus(409);
+        await usersRepository.followUser(logedUserId, userId);
+        res.sendStatus(201);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+}
+
+async function unfollow(req, res, next){
+
+    const { id: userId } = req.params;
+    const logedUserId = res.locals.dados.id;
+
+    try {
+        
+        const isFollowing = await usersRepository.isFollowing(logedUserId, userId);
+        if(!isFollowing) return res.sendStatus(409);
+        await usersRepository.unfollowUser(logedUserId, userId);
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+
+}
+
 export {
     getUser,
     getUsersByName,
     getUserById,
-    getUserId
-
+    getUserId,
+    checkIfUserIsFollowing,
+    follow,
+    unfollow
 }

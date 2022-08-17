@@ -34,10 +34,53 @@ async function getById(id){
 
 }
 
+async function isFollowing(followerId, followedId){
+
+	const { rows } = await postgres.query(`
+		SELECT * FROM following
+		WHERE following."followerId" = $1 AND following."followedId" = $2
+		LIMIT 1
+	`, [
+		followerId,
+		followedId
+	]);
+
+	return (rows.length > 0);
+
+
+}
+
+async function followUser(followerId, followedId){
+
+	return postgres.query(`
+		INSERT INTO following ("followerId", "followedId")
+		VALUES ($1, $2)
+	`, [
+		followerId,
+		followedId
+	]);
+
+}
+
+async function unfollowUser(followerId, followedId){
+
+	return postgres.query(`
+		DELETE FROM following
+		WHERE following."followerId" = $1 AND following."followedId" = $2
+	`, [
+		followerId,
+		followedId
+	]);
+
+}
+
 export const usersRepository = {
 	getUser,
 	getUserById,
 	getUserByName,
     insertUser,
-	getById
+	getById,
+	isFollowing,
+	followUser,
+	unfollowUser
 }
