@@ -1,6 +1,6 @@
 import postgres from '../databases/pgsql.js';
 
-async function getTimelinePosts(){
+async function getTimelinePosts(userId){
 
     const { rows: posts } = await postgres.query(`
         SELECT 
@@ -25,10 +25,15 @@ async function getTimelinePosts(){
         ON hashtags.id = "hashtagPosts"."hashtagId"
         LEFT JOIN "likedPosts"
         ON "likedPosts"."postId" = posts.id
+        JOIN "following"
+        ON "following"."followedId" = posts."userId"
+        WHERE "following"."followerId" = $1
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
         ORDER BY posts."createdAt" DESC
         LIMIT 20
-    `);
+    `, [
+        userId
+    ]);
 
     return posts;
 
