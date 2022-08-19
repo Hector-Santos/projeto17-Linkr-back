@@ -131,6 +131,7 @@ async function getPostsFromUser(userId){
 
     const { rows: posts } = await postgres.query(`
         SELECT 
+            posts."createdAt" AS "postCreation",
             posts.id,
             posts.content,
             COUNT("likedPosts".id) AS likes,
@@ -142,7 +143,47 @@ async function getPostsFromUser(userId){
             ) AS author,
             ARRAY_AGG(
                 COALESCE(hashtags.name, '')
-            ) AS "hashtags"
+            ) AS "hashtags",
+            reposts."originalPostId",
+            "repostAuthor".username AS "repostAuthorUsername",
+            "repostAuthor".id AS "repostAuthorId"
+        FROM reposts
+        JOIN "posts"
+        ON "reposts"."originalPostId" = posts.id
+        JOIN users "repostAuthor"
+        ON reposts."repostingUserId" = "repostAuthor".id
+        JOIN users
+        ON users.id = posts."userId"
+        LEFT JOIN "hashtagPosts"
+        ON posts.id = "hashtagPosts"."postId"
+        LEFT JOIN hashtags
+        ON hashtags.id = "hashtagPosts"."hashtagId"
+        LEFT JOIN "likedPosts"
+        ON "likedPosts"."postId" = posts.id
+        LEFT JOIN "following"
+        ON "following"."followerId" = $1
+        WHERE reposts."repostingUserId" = $1
+        GROUP BY posts.id, users.id, users.username, users."pictureUrl", reposts."originalPostId", reposts."repostingUserId", "repostAuthor".username, "repostAuthor".id
+
+        UNION ALL
+
+        SELECT 
+            posts."createdAt" AS "postCreation",
+            posts.id,
+            posts.content,
+            COUNT("likedPosts".id) AS likes,
+            posts.link,
+            JSON_BUILD_OBJECT(
+                'id', users.id,
+                'username', users.username,
+                'pictureUrl', users."pictureUrl"
+            ) AS author,
+            ARRAY_AGG(
+                COALESCE(hashtags.name, '')
+            ) AS "hashtags",
+            NULL,
+            NULL,
+            NULL
         FROM posts
         JOIN users
         ON users.id = posts."userId"
@@ -152,9 +193,11 @@ async function getPostsFromUser(userId){
         ON hashtags.id = "hashtagPosts"."hashtagId"
         LEFT JOIN "likedPosts"
         ON "likedPosts"."postId" = posts.id
-        WHERE users.id = $1
+        LEFT JOIN "following"
+        ON "following"."followedId" = posts."userId"
+        WHERE posts."userId" = $1
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
-        ORDER BY posts."createdAt" DESC
+        ORDER BY "postCreation" DESC
         LIMIT 20
     `, [
         userId
