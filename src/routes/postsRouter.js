@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getMetadataFromPostId, getTimeline, postPost, postsFromUser, postLikedPost, deleteLikedPost, getLikedPost, putLikePost, deletePost, editPost, lastLikesInfo } from "../controllers/postsControllers.js";
+import { getMetadataFromPostId, getTimeline, postPost, postsFromUser, postLikedPost, deleteLikedPost, getLikedPost, putLikePost, deletePost, editPost, lastLikesInfo, getCountPosts } from "../controllers/postsControllers.js";
 import { authentication } from "../middlewares/authMiddleware.js";
 import { validate } from "../middlewares/validationMiddleware.js";
 import likedPostsSchema from "../schemas/likedPostsSchema.js";
@@ -10,6 +10,7 @@ import { postsSchema, editSchema } from "../schemas/postsSchema.js";
 const postsRouter = Router();
 
 postsRouter.get('/timeline', authentication, getTimeline);
+postsRouter.get('/countposts', authentication, getCountPosts);
 postsRouter.get('/get-url-metadata/:postId', authentication, getMetadataFromPostId);
 postsRouter.post("/posts", (req, res, next) => validate(req, res, next, postsSchema),authentication, postPost);
 postsRouter.delete("/post/:id", authentication, deleteValidation, deletePost);
