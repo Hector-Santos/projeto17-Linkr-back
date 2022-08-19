@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getMetadataFromPostId, getTimeline, postPost, postsFromUser, postLikedPost, deleteLikedPost, getLikedPost, putLikePost, deletePost, editPost, lastLikesInfo, getCountPosts } from "../controllers/postsControllers.js";
+import { getMetadataFromPostId, getTimeline, postPost, postsFromUser, postLikedPost, deleteLikedPost, getLikedPost, putLikePost, deletePost, editPost, lastLikesInfo, repostPost, getPostReposts, getCountPosts } from "../controllers/postsControllers.js";
 import { authentication } from "../middlewares/authMiddleware.js";
 import { validate } from "../middlewares/validationMiddleware.js";
 import likedPostsSchema from "../schemas/likedPostsSchema.js";
@@ -21,6 +21,7 @@ postsRouter.delete("/likedPosts",(req, res, next) => validate(req, res, next, li
 postsRouter.put("/posts/:operation",(req, res, next) => validate(req, res, next, likedPostsSchema),authentication, putLikePost);
 postsRouter.put("/post/:id", (req, res, next) => validate(req, res, next, editSchema), authentication, editValidation, editPost);
 postsRouter.get('/posts/:id/last-likes', authentication, lastLikesInfo);
-
+postsRouter.post('/posts/:id/repost', authentication, repostPost);
+postsRouter.get('/posts/:id/reposts', authentication, getPostReposts);
 
 export default postsRouter;

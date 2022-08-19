@@ -8,13 +8,20 @@ async function getUserById(id) {
 	return postgres.query('SELECT * FROM users WHERE id=$1', [id]);
 }
 
-async function getUserByName (name) {
-	return postgres.query(`
-		SELECT users.id, users.username, users."pictureUrl"
-		FROM users
-		WHERE users.username
-		ILIKE '${name}%'
-	`)
+async function getUserByName (name, userId) {
+	return await postgres.query(`
+		SELECT u.id, u.username, u."pictureUrl",
+			( 
+				SELECT count(*)
+				FROM following f
+				WHERE f."followedId" = u.id
+				AND f."followerId" = $2
+			)::INT AS follow
+		FROM users u
+		WHERE u.username
+		ILIKE $1
+		ORDER BY follow DESC, u.username ASC
+		`, [`${name}%`, userId]);
 }
 
 
