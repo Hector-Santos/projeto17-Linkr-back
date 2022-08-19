@@ -9,7 +9,9 @@ import {
     subtractLike, 
     deleteLikesByPost, 
     deleteHashtagsByPost, 
-    getLastLikes} from "../repositories/postsRepository.js";
+    getLastLikes,
+    repost,
+    getReposts} from "../repositories/postsRepository.js";
 import getMetadata from "../utils/getMetadata.js";
 import  {usersRepository}  from '../repositories/usersRepository.js';
 import {getLiked, insertLikedPost, deleteLiked} from "../repositories/likedPostsRepository.js";
@@ -213,6 +215,39 @@ async function lastLikesInfo(req, res, next){
 
 };
 
+async function repostPost(req, res, next){
+
+    const { id: postId } = req.params;
+    const { id: userId } = res.locals.dados;
+
+    try {
+        
+        await repost(postId, userId);
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+};
+
+async function getPostReposts(req, res, next){
+
+    const { id: postId } = req.params;
+
+    try {
+        
+        const reposts = await getReposts(postId);
+        res.send(reposts);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+}
+
 export {
     getTimeline,
     getMetadataFromPostId,
@@ -224,5 +259,7 @@ export {
     putLikePost,
     deletePost,
     editPost,
-    lastLikesInfo
+    lastLikesInfo,
+    repostPost,
+    getPostReposts
 }
