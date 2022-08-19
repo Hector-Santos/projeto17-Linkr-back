@@ -22,7 +22,8 @@ async function getCountHashtagPosts(req, res, next){
 
         const count = await countHashtagPosts(hashtagName);
 
-        res.send(count[0].count);
+        count[0]? res.send(count[0].count) : res.send(0)
+
 
     } catch (err) {
         console.log(err);
