@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getComments, getCommentsCount, postComment } from "../controllers/commentController.js";
+import { getComments, postComment } from "../controllers/commentController.js";
 import { authentication } from "../middlewares/authMiddleware.js";
 import { validate } from "../middlewares/validationMiddleware.js";
 import { commentValidation } from "../middlewares/postMiddleware.js";
@@ -13,13 +13,6 @@ commentRouter.get(
     authentication, 
     commentValidation,
     getComments
-);
-
-commentRouter.get(
-    "/comments/count/:postId",
-    authentication,
-    commentValidation,
-    getCommentsCount
 );
 
 commentRouter.post(
