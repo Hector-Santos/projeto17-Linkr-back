@@ -279,10 +279,8 @@ export {
     deletePost,
     editPost,
     lastLikesInfo,
-<<<<<<< HEAD
-    getCountPosts
-=======
+    getCountPosts,
     repostPost,
     getPostReposts
->>>>>>> 0743c70896017e40fcd32c1ba08eaafa944fc496
+
 }

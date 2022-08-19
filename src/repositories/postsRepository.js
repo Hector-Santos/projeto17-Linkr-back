@@ -70,7 +70,7 @@ async function getTimelinePosts(userId,offset){
         ON "following"."followedId" = posts."userId"
         WHERE "following"."followerId" = $1 OR posts."userId" = $1
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
-        ORDER BY posts."createdAt" DESC
+        ORDER BY "postCreation" DESC
         LIMIT 10 
         OFFSET $2`,[
         userId, offset
