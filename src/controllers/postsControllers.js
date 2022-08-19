@@ -45,7 +45,8 @@ async function getCountPosts(req, res, next){
     try {
 
         const count = await countPosts(userId);
-        if(count.length === 0) return res.send(0)
+        const zero = 0
+        if(count.length === 0) return res.send(zero)
            res.send(count[0].count) 
         
 
