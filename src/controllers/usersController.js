@@ -20,14 +20,16 @@ async function getUser(req, res){
 };
 
 async function getUsersByName (req, res) {
-    const { name } = req.params;
+    const userId = res.locals.dados.id;
+    const name = req.params.name;
 
     try {
-        const { rows: dbUsers } = await usersRepository.getUserByName(name);
+        const { rows: dbUsers } = await usersRepository.getUserByName(name, userId);
 
         res.status(200).send(dbUsers);
     } catch (error) {
-        res.sendStatus(500);
+        console.log(error);
+        res.status(500).send(error);
     }
 }
 
