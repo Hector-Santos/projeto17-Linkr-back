@@ -18,7 +18,7 @@ async function getTrending(){
 
 }
 
-async function getHashtagPosts(hashtagName){
+async function getHashtagPosts(hashtagName, offset){
 
     const { rows: posts } = await postgres.query(`
         SELECT
@@ -44,9 +44,31 @@ async function getHashtagPosts(hashtagName){
         WHERE hashtags."name" = $1
         GROUP BY posts.id, users.id
         ORDER BY posts."createdAt" DESC
-        LIMIT 20
-    `, [
-        hashtagName
+        LIMIT 10
+        OFFSET $2`,[
+            hashtagName, offset
+    ]);
+
+    return posts;
+
+}
+
+
+async function countHashtagPosts(hashtagName, offset){
+
+    const { rows: posts } = await postgres.query(`
+    SELECT
+    COUNT("hashtags".id) 
+            FROM "posts"
+            JOIN "hashtagPosts"
+            ON "posts".id = "hashtagPosts"."postId"
+            JOIN "hashtags"
+            ON hashtags.id = "hashtagPosts"."hashtagId"
+            WHERE hashtags."name" = $1
+            GROUP BY  hashtags.id
+            LIMIT 10
+            OFFSET $2`,[
+            hashtagName, offset
     ]);
 
     return posts;
@@ -124,5 +146,6 @@ export {
     getTrending,
     getHashtagPosts,
     createIfDoesntExist,
-    createRelationships
+    createRelationships,
+    countHashtagPosts
 };

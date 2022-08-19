@@ -1,6 +1,6 @@
 import postgres from '../databases/pgsql.js';
 
-async function getTimelinePosts(userId){
+async function getTimelinePosts(userId,offset){
 
     const { rows: posts } = await postgres.query(`
         SELECT 
@@ -70,8 +70,27 @@ async function getTimelinePosts(userId){
         ON "following"."followedId" = posts."userId"
         WHERE "following"."followerId" = $1 OR posts."userId" = $1
         GROUP BY posts.id, users.id, users.username, users."pictureUrl"
-        ORDER BY "postCreation" DESC
-        LIMIT 20
+        ORDER BY posts."createdAt" DESC
+        LIMIT 10 
+        OFFSET $2`,[
+        userId, offset
+    ]);
+
+    return posts;
+
+};
+
+async function countPosts(userId){
+
+    const { rows: posts } = await postgres.query(`
+    SELECT 
+    COUNT(following."followerId")
+    FROM posts
+    JOIN "following"
+    ON "following"."followedId" = posts."userId"
+    WHERE "following"."followerId" = $1
+    GROUP BY following."followerId"
+    LIMIT 1
     `, [
         userId
     ]);
@@ -277,6 +296,7 @@ export {
     editPostById,
     getPostsFromUser,
     getLastLikes,
+    countPosts,
     repost,
     getReposts
 }

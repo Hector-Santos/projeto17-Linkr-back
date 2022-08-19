@@ -1,7 +1,8 @@
 import { 
     getPost, 
     getPostsFromUser, 
-    getTimelinePosts, 
+    getTimelinePosts,
+    countPosts, 
     insertPost, 
     deletePostById, 
     editPostById,  
@@ -21,13 +22,31 @@ import { countFollowing } from "../repositories/followersRepository.js";
 async function getTimeline(req, res, next){
 
     const { id: userId } = res.locals.dados;
-
+    let offset = 0
+    req.params.offset? offset = req.params.offset : offset = 0
     try {
         
-        const posts = await getTimelinePosts(userId);
+        const posts = await getTimelinePosts(userId,offset);
         const followingCount = await countFollowing(userId);
 
         res.send({ posts, followingCount });
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+};
+
+async function getCountPosts(req, res, next){
+
+    const { id: userId } = res.locals.dados;
+   
+    try {
+
+        const count = await countPosts(userId);
+
+        res.send(count[0].count);
 
     } catch (err) {
         console.log(err);
@@ -260,6 +279,10 @@ export {
     deletePost,
     editPost,
     lastLikesInfo,
+<<<<<<< HEAD
+    getCountPosts
+=======
     repostPost,
     getPostReposts
+>>>>>>> 0743c70896017e40fcd32c1ba08eaafa944fc496
 }

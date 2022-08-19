@@ -1,4 +1,4 @@
-import { getTrending, getHashtagPosts } from "../repositories/hashtagsRepository.js";
+import { getTrending, getHashtagPosts, countHashtagPosts } from "../repositories/hashtagsRepository.js";
 
 async function getCurrentTrending(req, res, next){
 
@@ -14,13 +14,32 @@ async function getCurrentTrending(req, res, next){
 
 };
 
+async function getCountHashtagPosts(req, res, next){
+
+    const { hashtagName } = req.params;
+   
+    try {
+
+        const count = await countHashtagPosts(hashtagName);
+
+        res.send(count[0].count);
+
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+
+};
+
 async function hahstagPosts(req, res, next){
 
     const { hashtagName } = req.params;
+    let offset = 0
+    req.params.offset? offset = req.params.offset : offset = 0
 
     try {
         
-        const posts = await getHashtagPosts(hashtagName);
+        const posts = await getHashtagPosts(hashtagName,offset);
         res.send(posts);
 
     } catch (err) {
@@ -32,5 +51,6 @@ async function hahstagPosts(req, res, next){
 
 export {
     getCurrentTrending,
-    hahstagPosts
+    hahstagPosts,
+    getCountHashtagPosts
 };
